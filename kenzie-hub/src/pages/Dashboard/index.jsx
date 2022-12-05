@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../components/services/api";
 import { Navbar, Header, Main } from "./styles";
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const [users, setUsers] = useState({});
+  const token = JSON.parse(localStorage.getItem("@TOKEN"));
 
-  const User = async () => {
-    try {
-      const response = await api.get("profile", {
-        Authorization: `Bearer ${api.interceptors.request.use(
-          JSON.parse(localStorage.getItem("@TOKEN"))
-        )}`,
-      });
-    } catch (error) {}
-  };
-  User();
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const response = await api.get("profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUsers(response.data);
+      } catch (error) {}
+    };
+    getUser();
+  }, [token]);
 
   const logout = () => {
     localStorage.removeItem("@TOKEN");
@@ -33,8 +36,8 @@ export const Dashboard = () => {
         </div>
       </Navbar>
       <Header>
-        <h3>Olá /pergunta</h3>
-        <p>testesteste</p>
+        <h3>Olá, {users.name}</h3>
+        <p>{users.course_module}</p>
       </Header>
       <Main>
         <h3>Que pena! Estamos em desenvolvimento :(</h3>

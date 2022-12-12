@@ -16,3 +16,5 @@ export const SchemaLogin = yup.object().shape({
     )
     .min(8, "É necessário uma senha de pelos 8 caracteres"),
 });
+
+

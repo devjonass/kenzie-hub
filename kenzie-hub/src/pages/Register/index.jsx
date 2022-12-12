@@ -1,15 +1,12 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Schema } from "./Schema";
-import { api } from "../../components/services/api";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { Container, FormRegister, Link } from "./styles";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserContext";
 
 export const Register = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const { submit, loading } = useContext(UserContext);
   const {
     register,
     handleSubmit,
@@ -18,25 +15,6 @@ export const Register = () => {
     mode: "onChange",
     resolver: yupResolver(Schema),
   });
-
-  const submitRegister = async (formData) => {
-    try {
-      setLoading(true);
-      const response = await api.post("users", formData);
-
-      toast.success("Conta criada com sucesso!");
-
-      navigate("/login");
-    } catch (error) {
-      toast.error(error.response.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const submit = async (data) => {
-    await submitRegister(data);
-  };
 
   return (
     <Container>

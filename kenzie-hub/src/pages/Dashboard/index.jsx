@@ -6,10 +6,18 @@ import { BsTrash } from "react-icons/bs";
 import { ModalContext } from "../../contexts/ModalContext";
 import { AddModalTech } from "../../components/AddModal";
 import { ModalProvider } from "styled-react-modal";
+import { ViewModal } from "../../components/ViewModal";
 
 export const Dashboard = () => {
   const { users, techs } = useContext(UserContext);
-  const { modalIsOpen, setModalIsOpen } = useContext(ModalContext);
+  const {
+    modalIsOpen,
+    setModalIsOpen,
+    modalView,
+    setModalView,
+
+    setDataTech,
+  } = useContext(ModalContext);
 
   const navigate = useNavigate();
 
@@ -21,6 +29,7 @@ export const Dashboard = () => {
   return (
     <>
       {modalIsOpen && <AddModalTech />}
+      {modalView && <ViewModal />}
       <ModalProvider>
         <Navbar>
           <div>
@@ -30,7 +39,7 @@ export const Dashboard = () => {
         </Navbar>
         <Header>
           <h3>{users.name}</h3>
-          <p>{users.course_module} (Introdução ao Frontend)</p>
+          <p>{users.course_module} </p>
         </Header>
         <Main>
           <div className="techsAndButton">
@@ -39,17 +48,33 @@ export const Dashboard = () => {
           </div>
 
           <ListTech>
-            {techs.map((tech) => (
-              <li key={tech.id}>
-                <h5>{tech.title}</h5>
-                <div className="statusAndtrash">
-                  <p>{tech.status}</p>
-                  <span>
-                    <BsTrash style={{ color: "white", cursor: "pointer" }} />
-                  </span>
-                </div>
-              </li>
-            ))}
+            {techs.map((tech, index) => {
+              return (
+                <li
+                  onClick={() => {
+                    setModalView(true);
+                    setDataTech(tech);
+                  }}
+                  key={index}
+                >
+                  {/* <button
+                    className="btnCLick"
+                    onClick={() => {
+                      setDataTech({ tech });
+                      setModalView(true);
+                    }}
+                  > */}
+                  <h5>{tech.title}</h5>
+                  <div className="statusAndtrash">
+                    <p>{tech.status}</p>
+                    <span>
+                      <BsTrash style={{ color: "white", cursor: "pointer" }} />
+                    </span>
+                  </div>
+                  {/* </button> */}
+                </li>
+              );
+            })}
           </ListTech>
         </Main>
       </ModalProvider>

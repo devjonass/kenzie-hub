@@ -10,23 +10,23 @@ export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState(null);
   const [techs, setTechs] = useState([]);
-  useEffect(() => {
+  const getUser = async () => {
     const token = JSON.parse(localStorage.getItem("@TOKEN"));
-    const getUser = async () => {
-      if (!token) {
-        return;
-      }
-      try {
-        api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const response = await api.get("profile");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const response = await api.get("profile");
 
-        setUsers(response.data);
-        setTechs(response.data.techs);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
+      setUsers(response.data);
+      setTechs(response.data.techs);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
     getUser();
   }, []);
 
@@ -37,6 +37,7 @@ export const UserProvider = ({ children }) => {
       const { token, user: userResponse } = response.data;
       toast.success("Login efetuado com sucesso!");
       setUsers(userResponse);
+      setTechs(userResponse.techs);
       localStorage.clear();
       localStorage.setItem("@TOKEN", JSON.stringify(response.data.token));
       localStorage.setItem("@USERID", JSON.stringify(response.data.user.id));
@@ -57,9 +58,8 @@ export const UserProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await api.post("users", formData);
-
+      console.log(response);
       toast.success("Conta criada com sucesso!");
-
       navigate("/login");
     } catch (error) {
       toast.error(error);
@@ -74,7 +74,16 @@ export const UserProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ loginSubmit, submit, loading, setLoading, users, techs }}
+      value={{
+        loginSubmit,
+        submit,
+        loading,
+        setLoading,
+        users,
+        techs,
+        setTechs,
+        getUser,
+      }}
     >
       {children}
     </UserContext.Provider>
